@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Vitrual</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+        };
+        
+    </style>
+</head>
+<body>
+    
+    <div id="app" class="container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        /*Vanilla JavaScript*/
+        
+        window.onload = (e) => {
+            const form = document.getElementById('form');
+            e.preventDefault();
+        }
+
+        function number(){
+            var num = event.keyCode;
+            var numeros = [48,49,50,51,52,53,54,55,56,57,96,97,98,99,100,101,102,103,104,105,106,107,109,110,111];
+
+            numeros.map(function(numero){
+                if(num == numero){
+                    document.getElementById('areaTexto').value += event.key;
+                }else if( num == 46 || num == 27 ){
+                    document.getElementById("areaTexto").value = '';
+                }else if( num == 13 ){
+                    document.getElementById("areaTexto").value = eval(document.getElementById("areaTexto").value);
+                }else if( num == 08 ){
+                    function backspace(){
+                        document.getElementById('areaTexto').value = document.getElementById('areaTexto').value.substring(0,document.getElementById('areaTexto').value.length-1);
+                    }
+                    backspace();
+                }
+            });
+        }
+        window.onkeydown = number;
+
+
+        /*VueJS */
+
+        Vue.component('calculadora', { //Componente de teclado(funcionalidades de la calculadora)
+            template: `
+                <div :style="div">
+                    <form action="" :style="contenedor" name="calculator" id="form">
+                        <vistaResultado :vistaResultado="vistaResultado"></vistaResultado>
+                        <mouseTeclado :style="numbers" :mouseTeclado="mouseTeclado"></mouseTeclado>
+                    </form>
+                </div>
+                `,
+                data() {
+                    return {
+                        contenedor: {
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, 75px)',
+                            gridTemplateRows: 'repeat(5, 75px)',
+                            justifyContent: 'center'
+                        },
+                        div:{
+                            paddingTop: '20px',
+                            background: 'rgba(0, 0, 0, 0.67)',
+                            width: '70%',
+                            height: '480px',
+                            marginLeft: '15%',
+                            borderRadius: '15px'
+                        }
+                    }
+                }
+        });
+
+        Vue.component('vistaResultado', {
+            props: ['vistaResultado'],
+            template: `
+                    <input :style="vista" type="textfield" name="val" id="areaTexto" readonly value="" autocomplete="off" >
+            `,
+                data() {
+                    return {
+                        vista: {
+                            background: '#282c27',
+                            gridColumn: 'span 4',
+                            color: 'whitesmoke',
+                            textAlign: 'right',
+                            paddingRight: '7%',
+                            fontSize: '40px',
+                            borderRadius: '38px',
+                            margin: '-5px 0 10px 0'
+                        }
+                    }
+                }
+        });
+
+        Vue.component('mouseTeclado', {
+            props: ['mouseTeclado'],
+            template: `
+                <div :style="botones">
+                    <input :style="ce" type="reset" value="CE">
+                    <input :style="operador" type="button" value="÷" onclick="document.calculator.val.value+='/'">
+                    <input :style="operador" type="button" value="x" onclick="document.calculator.val.value+='*'">
+                    <input :style="operador" type="button" value="-" onclick="document.calculator.val.value+='-'">
+                    <input :style="numero" type="button" value="7" onclick="document.calculator.val.value+='7'">
+                    <input :style="numero" type="button" value="8" onclick="document.calculator.val.value+='8'">
+                    <input :style="numero" type="button" value="9" onclick="document.calculator.val.value+='9'">
+                    <input :style="mas" type="button" value="+" onclick="document.calculator.val.value+='+'">
+                    <input :style="numero" type="button" value="4" onclick="document.calculator.val.value+='4'">
+                    <input :style="numero" type="button" value="5" onclick="document.calculator.val.value+='5'">
+                    <input :style="numero" type="button" value="6" onclick="document.calculator.val.value+='6'">
+                    <input :style="numero" type="button" value="1" onclick="document.calculator.val.value+='1'">
+                    <input :style="numero" type="button" value="2" onclick="document.calculator.val.value+='2'">
+                    <input :style="numero" type="button" value="3" onclick="document.calculator.val.value+='3'">
+                    <input :style="igual" type="button" value="=" onclick="document.calculator.val.value=eval(document.calculator.val.value)">
+                    <input :style="numero" type="button" value="0" onclick="document.calculator.val.value+='0'">
+                    <input :style="numero" type="button" value="." onclick="document.calculator.val.value+='.'">
+                    <input :style="del" type="button" value="⌫" onclick="
+                    document.getElementById('areaTexto').value = document.getElementById('areaTexto').value.substring(0,document.getElementById('areaTexto').value.length-1);">
+                </div>
+            `,
+                data(){
+                    return{
+                        botones: {
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(4, 75px)',
+                            gridTemplateRows: 'repeat(5, 75px)',
+
+                        },
+                        numero: {
+                            background: '#282c27',
+                            color: 'whitesmoke',
+                            borderRadius: '50%',
+                            boxShadow: 'none',
+                            fontSize: '35px',
+                            fontWeight: 'bold'
+                        },
+                        ce: {
+                            background: 'red',
+                            color: 'whitesmoke',
+                            borderRadius: '50%',
+                            fontSize: '35px',
+                            fontWeight: 'bold'
+                        },
+                        operador: {
+                            background: '#001aff',
+                            color: 'whitesmoke',
+                            borderRadius: '50%',
+                            fontSize: '35px',
+                            fontWeight: 'bold'
+                        },
+                        mas: {
+                            background: '#001aff',
+                            color: 'whitesmoke',
+                            gridRow: 'span 2',
+                            borderRadius: '38px',
+                            fontSize: '35px',
+                            fontWeight: 'bold'
+                        },
+                        igual: {
+                            background: '#199409',
+                            color: 'whitesmoke',
+                            gridRow: 'span 2',
+                            borderRadius: '38px',
+                            fontSize: '35px',
+                            fontWeight: 'bold'
+                        },
+                        del: {
+                            background: '#ff6600',
+                            color: 'whitesmoke',
+                            borderRadius: '50%',
+                            fontSize: '35px',
+                            fontWeight: 'bold'
+                        }
+                    }
+                }
+        });
+
+        //HEADER
+        Vue.component('header-style', {
+            template: `
+                    <header  :style="header">
+                        <h1>{{Titulo}}</h1>
+                    </header>
+            `,
+            data(){
+                return {
+                    Titulo: 'Calculadora Virtual',
+                    header: {
+                        width: '100%',
+                        color: 'black',
+                        textAlign: 'center',
+                        fontSize: '30px',
+                        fixed: 'top',
+                        marginBottom: '15px',
+                    }
+                }
+            }
+        });
+
+        //FOOTER
+        Vue.component('footer-style',{
+            template:`
+            <footer :style="footer">
+                <p>{{ mention }}</p>
+            </footer>
+            `,
+            data(){
+                return{
+                    mention : '© 2022 | Richard Carrillo',
+                    footer: {
+                        borderRadius: '10px',
+                        color: 'black',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        fontSize: '12px',
+                        padding: '30px 0 5px 0',
+                        fixed: 'bottom',
+                    }
+                }
+            }
+        });
+
+
+
+        new Vue({
+            el: '#app',
+            template: `
+                    <div :style="container">
+                        <header-style></header-style>    
+                        <calculadora></calculadora>
+                        <footer-style></footer-style>
+                    </div>
+            `,
+            data(){
+                return {
+                    container: {   
+                        margin: 0,
+                        background: '#D8D0D0',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(1, auto)',
+                        gridTemplateRows: 'repeat(3, auto)',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100%'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
